@@ -12,6 +12,7 @@
   <buildtool_depend>catkin</buildtool_depend>
   <depend>message_generation</depend>
   <depend>qut_manipulation_commander</depend>
+  <depend>qut_panda_control_wrappers</depend>
 
   <export>
   </export>
