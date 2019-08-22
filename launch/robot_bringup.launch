@@ -1,0 +1,27 @@
+<?xml version="1.0" ?>
+<launch>
+
+  <arg name="robot_ip" default="172.16.0.2" />
+  <arg name="load_gripper" default="true" />
+
+  <include file="$(find franka_control)/launch/franka_control.launch">
+    <arg name="robot_ip" value="$(arg robot_ip)" />
+    <arg name="load_gripper" value="$(arg load_gripper)" />
+  </include>
+
+  <!-- Set some project specific defaults for the panda arm. -->
+  <node name="set_robot_defaults" pkg="qut_panda_control_wrappers" type="set_panda_defaults.py" respawn="false" output="screen"/>
+
+  <include file="$(find qut_panda_moveit_config)/launch/panda_moveit.launch">
+    <arg name="load_gripper" value="$(arg load_gripper)" />
+  </include>
+  <include file="$(find qut_panda_moveit_config)/launch/moveit_rviz.launch" />
+
+  <include file="$(find qut_panda_control_wrappers)/launch/cartesian_velocity_controller.launch">
+    <arg name="stopped" value="true" />
+  </include>
+
+  <node pkg="qut_panda_driver" type="panda_commander" name="panda_commander" output="screen">
+    <rosparam command="load" file="$(find qut_panda_driver)/config/config.yaml" /> 
+  </node>
+</launch>

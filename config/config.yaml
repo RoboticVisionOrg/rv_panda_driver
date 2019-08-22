@@ -1,0 +1,11 @@
+move_group: panda_arm_hand
+controllers:
+  - name: "cartesian/velocity"
+    topic_type: "geometry_msgs/Twist"
+    type: "publisher"
+    controller: "cartesian_velocity_node_controller"
+    maps: "/cartesian_velocity_node_controller/cartesian_velocity"
+  - name: "/move_group/goal"
+    topic_type: "moveit_msgs/MoveGroupActionGoal"
+    type: "publisher"
+    controller: "position_joint_trajectory_controller"
