@@ -18,12 +18,12 @@ roslaunch qut_panda_driver robot_bringup.launch
 
 ### Subscribed Topics
 
-- **cartesian/velocity** (geometry_msgs/Twist)
+- **cartesian/velocity** ([geometry_msgs/Twist](https://docs.ros.org/api/geometry_msgs/html/msg/Twist.html))
 Moves the end-effector in cartesian space w.r.t. the base frame.
 
 ### Services
 
-- **home** (std_srvs/Empty)
+- **home** ([std_srvs/Empty](http://docs.ros.org/jade/api/std_srvs/html/srv/Empty.html))
 Moves the robot back to its initial ready pose.
 
 ### Action API
