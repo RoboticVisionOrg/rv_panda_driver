@@ -39,7 +39,7 @@ catkin_package(
 ## Mark executable scripts (Python etc.) for installation
 ## in contrast to setup.py, you can choose the destination
 install(PROGRAMS
-  scripts/panda_commander
+  scripts/panda_commander scripts/set_panda_defaults
   DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
 )
 
@@ -56,6 +56,13 @@ install(PROGRAMS
 #   FILES_MATCHING PATTERN "*.h"
 #   PATTERN ".svn" EXCLUDE
 # )
+
+install(DIRECTORY launch/
+  DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION}/launch
+)
+install(DIRECTORY config/
+  DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION}/config
+)
 
 ## Mark other files for installation (e.g. launch and bag files, etc.)
 # install(FILES

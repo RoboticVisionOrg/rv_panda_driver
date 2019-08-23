@@ -10,7 +10,7 @@
   </include>
 
   <!-- Set some project specific defaults for the panda arm. -->
-  <node name="set_robot_defaults" pkg="qut_panda_control_wrappers" type="set_panda_defaults.py" respawn="false" output="screen"/>
+  <node name="set_robot_defaults" pkg="qut_panda_driver" type="set_panda_defaults" respawn="false" output="screen"/>
 
   <include file="$(find qut_panda_moveit_config)/launch/panda_moveit.launch">
     <arg name="load_gripper" value="$(arg load_gripper)" />
