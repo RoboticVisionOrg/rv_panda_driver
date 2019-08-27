@@ -36,3 +36,7 @@ class PandaCommander(ManipulationCommander):
 
     self.estop_publisher.publish(out)
     self.last_estop_state = out.data
+
+  def gripper_cb(self, goal):
+    self.moveit_commander.grasp(goal.width, goal.e_outer, goal.e_inner, goal.speed)
+    self.gripper_server.set_succeeded(MoveGripperResult(result=0))
