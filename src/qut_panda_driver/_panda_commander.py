@@ -4,6 +4,7 @@ from qut_manipulation_commander import ManipulationCommander
 
 from std_msgs.msg import Int8
 from franka_msgs.msg import FrankaState
+from qut_manipulation_msgs.msg import MoveGripperActionResult
 
 from _panda_moveit_commander import PandaMoveItCommander
 
@@ -38,5 +39,6 @@ class PandaCommander(ManipulationCommander):
     self.last_estop_state = out.data
 
   def gripper_cb(self, goal):
+    print(goal)
     self.moveit_commander.grasp(goal.width, goal.e_outer, goal.e_inner, goal.speed)
-    self.gripper_server.set_succeeded(MoveGripperResult(result=0))
+    self.gripper_server.set_succeeded(MoveGripperActionResult(result=0))
