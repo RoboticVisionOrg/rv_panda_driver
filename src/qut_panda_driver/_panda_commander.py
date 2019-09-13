@@ -26,6 +26,11 @@ class PandaCommander(ManipulationCommander):
     self.estop_publisher = rospy.Publisher('estop', Int8, queue_size=1)
     self.last_estop_state = 0
 
+  def pose_cb(self, goal):
+    if goal.pose.header.frame_id == '':
+      goal.pose.header.frame_id = 'panda_link0'
+    ManipulationCommander.pose_cb(self, goal)
+    
   def state_cb(self, msg):
     out = Int8(0)
 
