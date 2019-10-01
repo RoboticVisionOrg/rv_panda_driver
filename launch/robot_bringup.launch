@@ -10,18 +10,18 @@
   </include>
 
   <!-- Set some project specific defaults for the panda arm. -->
-  <node name="set_robot_defaults" pkg="qut_panda_driver" type="set_panda_defaults" respawn="false" output="screen"/>
+  <node name="set_robot_defaults" pkg="rv_panda_driver" type="set_panda_defaults" respawn="false" output="screen"/>
 
-  <include file="$(find qut_panda_moveit_config)/launch/panda_moveit.launch">
+  <include file="$(find rv_panda_moveit_config)/launch/panda_moveit.launch">
     <arg name="load_gripper" value="$(arg load_gripper)" />
   </include>
-  <include file="$(find qut_panda_moveit_config)/launch/moveit_rviz.launch" />
+  <include file="$(find rv_panda_moveit_config)/launch/moveit_rviz.launch" />
 
-  <include file="$(find qut_panda_control_wrappers)/launch/cartesian_velocity_controller.launch">
+  <include file="$(find rv_panda_control_wrappers)/launch/cartesian_velocity_controller.launch">
     <arg name="stopped" value="true" />
   </include>
 
-  <node pkg="qut_panda_driver" type="panda_commander" name="panda_commander" output="screen">
-    <rosparam command="load" file="$(find qut_panda_driver)/config/config.yaml" /> 
+  <node pkg="rv_panda_driver" type="panda_commander" name="panda_commander" output="screen">
+    <rosparam command="load" file="$(find rv_panda_driver)/config/config.yaml" /> 
   </node>
 </launch>

@@ -2,7 +2,7 @@ import rospy
 import actionlib
 import franka_gripper.msg
 
-from qut_manipulation_commander import ManipulationMoveItCommander
+from rv_manipulation_commander import ManipulationMoveItCommander
 from franka_control.msg import ErrorRecoveryActionGoal
 
 

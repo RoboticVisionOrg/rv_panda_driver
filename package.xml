@@ -1,8 +1,8 @@
 <?xml version="1.0"?>
 <package format="2">
-  <name>qut_panda_driver</name>
+  <name>rv_panda_driver</name>
   <version>0.1.0</version>
-  <description>The qut_panda_driver package</description>
+  <description>The rv_panda_driver package</description>
   
   <maintainer email="g.suddrey@qut.edu.au">Gavin Suddrey</maintainer>
   <license>BSD</license>
@@ -11,8 +11,8 @@
   
   <buildtool_depend>catkin</buildtool_depend>
   <depend>message_generation</depend>
-  <depend>qut_manipulation_commander</depend>
-  <depend>qut_panda_control_wrappers</depend>
+  <depend>rv_manipulation_commander</depend>
+  <depend>rv_panda_control_wrappers</depend>
 
   <export>
   </export>

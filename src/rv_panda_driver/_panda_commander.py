@@ -1,10 +1,10 @@
 import rospy
 
-from qut_manipulation_commander import ManipulationCommander
+from rv_manipulation_commander import ManipulationCommander
 
 from std_msgs.msg import Int8
 from franka_msgs.msg import FrankaState
-from qut_manipulation_msgs.msg import MoveGripperActionResult
+from rv_manipulation_msgs.msg import MoveGripperActionResult
 
 from _panda_moveit_commander import PandaMoveItCommander
 
