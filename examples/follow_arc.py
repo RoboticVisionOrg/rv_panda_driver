@@ -46,7 +46,7 @@ def move_to(position, quaternion):
   target.pose.orientation.w = quaternion[3]
 
   # Create goal from target pose
-  goal = MoveToPoseGoal(pose=target)
+  goal = MoveToPoseGoal(goal_pose=target)
 
   # Send goal and wait for it to finish
   client.send_goal(goal)
@@ -55,8 +55,8 @@ def move_to(position, quaternion):
 import rospy
 import actionlib
 
-from rv_manipulation_msgs.msg import MoveToPoseAction, MoveToPoseGoal
-from rv_manipulation_msgs.srv import LinkPose
+from rv_msgs.msg import MoveToPoseAction, MoveToPoseGoal
+from rv_msgs.srv import GetRelativePose
 
 from geometry_msgs.msg import PoseStamped
 

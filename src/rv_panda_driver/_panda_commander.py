@@ -4,7 +4,7 @@ from rv_manipulation_commander import ManipulationCommander
 
 from std_msgs.msg import Int8
 from franka_msgs.msg import FrankaState
-from rv_manipulation_msgs.msg import MoveGripperAction, MoveGripperActionResult
+from rv_msgs.msg import ActuateGripperAction, ActuateGripperActionResult
 
 from _panda_moveit_commander import PandaMoveItCommander
 
