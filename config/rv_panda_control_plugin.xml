@@ -1,0 +1,8 @@
+<library path="lib/librv_panda_driver">
+  <class name="rv_panda_driver/CartesianVelocityNodeController" type="rv_panda_driver::CartesianVelocityNodeController" base_class_type="controller_interface::ControllerBase">
+    <description>
+      A Cartesian velocity controller that takes commands from a ROS subscriber.
+    </description>
+  </class>
+
+</library>

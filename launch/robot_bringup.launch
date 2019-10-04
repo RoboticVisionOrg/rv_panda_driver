@@ -17,7 +17,7 @@
   </include>
   <include file="$(find rv_panda_moveit_config)/launch/moveit_rviz.launch" />
 
-  <include file="$(find rv_panda_control_wrappers)/launch/cartesian_velocity_controller.launch">
+  <include file="$(find rv_panda_driver)/launch/cartesian_velocity_controller.launch.xml">
     <arg name="stopped" value="true" />
   </include>
 

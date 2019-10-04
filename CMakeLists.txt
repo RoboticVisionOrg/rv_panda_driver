@@ -1,10 +1,25 @@
 cmake_minimum_required(VERSION 2.8.3)
 project(rv_panda_driver)
 
+set(CMAKE_BUILD_TYPE Release)
+
+set(CMAKE_CXX_STANDARD 14)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+
 ## Find catkin macros and libraries
 ## if COMPONENTS list like find_package(catkin REQUIRED COMPONENTS xyz)
 ## is used, also find other catkin packages
-find_package(catkin REQUIRED)
+find_package(catkin REQUIRED COMPONENTS
+  franka_control
+  franka_description
+  franka_gripper
+  franka_hw
+  franka_msgs
+  rv_panda_moveit_config
+  geometry_msgs
+  rospy
+  roscpp
+)
 
 ## System dependencies are found with CMake's conventions
 # find_package(Boost REQUIRED COMPONENTS system)
@@ -24,10 +39,58 @@ catkin_python_setup()
 ## CATKIN_DEPENDS: catkin_packages dependent projects also need
 ## DEPENDS: system dependencies of this project that dependent projects also need
 catkin_package(
+  LIBRARIES ${PROJECT_NAME}
+  CATKIN_DEPENDS
+    controller_interface
+    franka_hw
+    geometry_msgs
+    hardware_interface
+    pluginlib
+    realtime_tools
+    roscpp
+  DEPENDS Franka
 )
 
+###########
+## Build ##
+###########
 
+## Specify additional locations of header files
+## Your package locations should be listed before other locations
+include_directories(
+# include
+  ${catkin_INCLUDE_DIRS}
+)
 
+## Declare a C++ library
+add_library(${PROJECT_NAME}
+  src/cartesian_velocity_node_controller.cpp
+)
+
+## Add cmake target dependencies of the library
+## as an example, code may need to be generated before libraries
+## either from message generation or dynamic reconfigure
+# add_dependencies(${PROJECT_NAME} ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
+add_dependencies(${PROJECT_NAME}
+  ${${PROJECT_NAME}_EXPORTED_TARGETS}
+  ${catkin_EXPORTED_TARGETS}
+  ${PROJECT_NAME}_gencpp
+)
+
+## Specify libraries to link a library or executable target against
+target_link_libraries(${PROJECT_NAME} PUBLIC
+  ${Franka_LIBRARIES}
+  ${catkin_LIBRARIES}
+)
+
+target_include_directories(${PROJECT_NAME} SYSTEM PUBLIC
+  ${Franka_INCLUDE_DIRS}
+  #${EIGEN3_INCLUDE_DIRS}
+  ${catkin_INCLUDE_DIRS}
+)
+target_include_directories(${PROJECT_NAME} PUBLIC
+  include
+)
 
 #############
 ## Install ##
@@ -41,6 +104,12 @@ catkin_package(
 install(PROGRAMS
   scripts/panda_commander scripts/set_panda_defaults
   DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
+)
+
+install(TARGETS ${PROJECT_NAME}
+   ARCHIVE DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
+   LIBRARY DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
+   RUNTIME DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
 )
 
 ## Mark executables and/or libraries for installation
