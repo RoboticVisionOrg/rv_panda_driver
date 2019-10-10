@@ -2,12 +2,12 @@ import rospy
 import actionlib
 import franka_gripper.msg
 
-from rv_manipulation_commander import ManipulationMoveItCommander
+from rv_manipulation_driver import ManipulationMoveItDriver
 from franka_control.msg import ErrorRecoveryActionGoal
 
-class PandaMoveItCommander(ManipulationMoveItCommander):
+class PandaMoveItCommander(ManipulationMoveItDriver):
   def __init__(self, group_name=None):
-    ManipulationMoveItCommander.__init__(self, group_name)
+    ManipulationMoveItDriver.__init__(self, group_name)
     self.reset_publisher = rospy.Publisher('/franka_control/error_recovery/goal', ErrorRecoveryActionGoal, queue_size=1)
 
   def home_gripper(self):

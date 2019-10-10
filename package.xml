@@ -28,6 +28,6 @@
   <depend>rv_panda_moveit_config</depend>
 
   <export>
-    <controller_interface plugin="${prefix}/config/rv_panda_driver_plugin.xml"/>
+    <controller_interface plugin="${prefix}/config/rv_panda_control_plugin.xml"/>
   </export>
 </package>
