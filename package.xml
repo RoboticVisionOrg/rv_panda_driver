@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <package format="2">
   <name>rv_panda_driver</name>
-  <version>0.1.0</version>
+  <version>0.2.1</version>
   <description>The rv_panda_driver package</description>
   
   <maintainer email="g.suddrey@qut.edu.au">Gavin Suddrey</maintainer>
@@ -11,7 +11,7 @@
   
   <buildtool_depend>catkin</buildtool_depend>
   <depend>message_generation</depend>
-  <depend>rv_manipulation_commander</depend>
+  <depend>rv_manipulation_driver</depend>
   <depend>franka_hw</depend>
   <depend>franka_msgs</depend>
   <depend>franka_control</depend>
