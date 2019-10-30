@@ -1,11 +1,17 @@
 import rospy
+import time
 
 from rv_manipulation_driver import ManipulationDriver
 
 from std_msgs.msg import Int8
-from franka_msgs.msg import FrankaState
-from rv_msgs.msg import ActuateGripperAction, ActuateGripperActionResult
+from geometry_msgs.msg import Twist
 
+from rv_msgs.msg import ManipulatorState
+from rv_msgs.msg import ActuateGripperAction, ActuateGripperActionResult
+from rv_msgs.srv import SetCartesianImpedanceResponse
+
+from franka_control.srv import SetCartesianImpedance as FrankaSetCartesianImpedance
+from franka_msgs.msg import FrankaState
 from _panda_moveit_commander import PandaMoveItCommander
 
 class PandaCommander(ManipulationDriver):
@@ -19,31 +25,101 @@ class PandaCommander(ManipulationDriver):
 
     ManipulationDriver.__init__(self, PandaMoveItCommander(self.move_group))
 
+    self.velocity_publisher = rospy.Publisher('/cartesian_velocity_node_controller/cartesian_velocity', Twist, queue_size=1)
     self.recover_on_estop = rospy.get_param('/manipulation_commander/recover_on_estop', True)
 
     # handling e-stop
     rospy.Subscriber('/franka_state_controller/franka_states', FrankaState, self.state_cb)
-    self.estop_publisher = rospy.Publisher('estop', Int8, queue_size=1)
     self.last_estop_state = 0
 
+    self.cartesian_impedance_proxy = rospy.ServiceProxy('/franka_control/set_cartesian_impedance', FrankaSetCartesianImpedance)
+
+  def velocity_cb(self, msg):
+    if self.switcher.get_current_name() != 'cartesian_velocity_node_controller':
+        self.switcher.switch_controller('cartesian_velocity_node_controller')
+    
+    result = self.transform_velocity(msg, 'panda_link0')
+
+    self.velocity_publisher.publish(result)
+
   def pose_cb(self, goal):
-    print(goal)
     if goal.goal_pose.header.frame_id == '':
       goal.goal_pose.header.frame_id = 'panda_link0'
     ManipulationDriver.pose_cb(self, goal)
 
   def state_cb(self, msg):
-    out = Int8(0)
+    state = ManipulatorState()
+    state.ee_pose = self.get_link_pose('panda_link0', 'panda_EE') 
+    
+    state.cartesian_contact = msg.cartesian_contact
+    state.cartesian_collision = msg.cartesian_collision
+    
+    state.errors |= ManipulatorState.ESTOP if msg.robot_mode == FrankaState.ROBOT_MODE_USER_STOPPED else 0
+    state.errors |= ManipulatorState.COLLISION if any(state.cartesian_collision) else 0
 
-    if msg.robot_mode == FrankaState.ROBOT_MODE_USER_STOPPED:
-      out.data = 1
-    elif msg.robot_mode == FrankaState.ROBOT_MODE_IDLE:
+    for n in msg.last_motion_errors.__slots__:
+      if msg.robot_mode != 2 and getattr(msg.last_motion_errors, n):
+        if n in ['joint_position_limits_violation', 
+                 'joint_velocity_violation', 
+                 'joint_position_motion_generator_start_pose_invalid',
+                 'joint_motion_generator_position_limits_violation',
+                 'joint_motion_generator_velocity_limits_violation',
+                 'joint_motion_generator_velocity_discontinuity',
+                 'joint_motion_generator_acceleration_discontinuity']:
+          state.errors |= ManipulatorState.JOINT_LIMIT_VIOLATION   
+
+        elif n in ['cartesian_position_limits_violation',
+                   'cartesian_velocity_violation',
+                   'cartesian_velocity_profile_safety_violation',
+                   'cartesian_position_motion_generator_start_pose_invalid',
+                   'cartesian_motion_generator_elbow_limit_violation',
+                   'cartesian_motion_generator_velocity_limits_violation',
+                   'cartesian_motion_generator_velocity_discontinuity',
+                   'cartesian_motion_generator_acceleration_discontinuity',
+                   'cartesian_motion_generator_elbow_sign_inconsistent',
+                   'cartesian_motion_generator_start_elbow_invalid',
+                   'cartesian_motion_generator_joint_position_limits_violation',
+                   'cartesian_motion_generator_joint_velocity_limits_violation',
+                   'cartesian_motion_generator_joint_velocity_discontinuity',
+                   'cartesian_motion_generator_joint_acceleration_discontinuity',
+                   'cartesian_position_motion_generator_invalid_frame']:
+          state.errors |= ManipulatorState.CARTESIAN_LIMIT_VIOLATION
+
+        elif n in ['force_control_safety_violation',
+                   'joint_reflex',
+                   'cartesian_reflex',
+                   'force_controller_desired_force_tolerance_violation'
+                   'joint_p2p_insufficient_torque_for_planning'
+                   'tau_j_range_violation']:
+          state.errors |= ManipulatorState.TORQUE_LIMIT_VIOLATION
+
+        else:
+          state.errors |= ManipulatorState.OTHER
+
+    self.state_publisher.publish(state)
+
+    if msg.robot_mode == FrankaState.ROBOT_MODE_IDLE:
       if self.recover_on_estop and self.last_estop_state == 1:
         self.moveit_commander.recover()
+    else:
+      if state.errors & ManipulatorState.OTHER == ManipulatorState.OTHER:
+        self.moveit_commander.recover()
+    
+    self.last_estop_state = 1 if msg.robot_mode == FrankaState.ROBOT_MODE_USER_STOPPED else 0
 
-    self.estop_publisher.publish(out)
-    self.last_estop_state = out.data
 
   def recover_cb(self, req):
     self.moveit_commander.recover()
     return []
+
+  def set_cartesian_impedance_cb(self, req):
+    current = self.switcher.get_current_name()
+    self.switcher.switch_controller(None)
+    
+    time.sleep(0.1)
+    result = self.cartesian_impedance_proxy(req.cartesian_impedance)
+    
+    self.switcher.switch_controller(current)
+
+    return SetCartesianImpedanceResponse(success=result.success, error=result.error)
+    

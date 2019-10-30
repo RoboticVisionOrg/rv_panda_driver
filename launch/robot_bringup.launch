@@ -3,10 +3,14 @@
 
   <arg name="robot_ip" default="172.16.0.2" />
   <arg name="load_gripper" default="true" />
+  <arg name="internal_controller" default="cartesian_impedance" />
 
-  <include file="$(find franka_control)/launch/franka_control.launch">
+  <rosparam param="franka_control/internal_controller">$(arg internal_controller)</rosparam>
+
+  <include file="$(find rv_panda_driver)/launch/franka_control.launch.xml">
     <arg name="robot_ip" value="$(arg robot_ip)" />
     <arg name="load_gripper" value="$(arg load_gripper)" />
+    <arg name="internal_controller" value="$(arg internal_controller)" />
   </include>
 
   <!-- Set some project specific defaults for the panda arm. -->
