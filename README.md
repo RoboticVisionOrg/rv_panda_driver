@@ -59,6 +59,37 @@ client.send_goal(goal)
 client.wait_for_result()
 ```
 
+#### Moving the End-Effector in Cartesian Space
+
+The following example moves the arm at 2cm a second in the z-axis of the base-frame for 5 seconds. For safety reasons the driver has an expected minimum frequency of 100Hz.
+
+```
+import rospy
+import timeit
+from geometry_msgs.msg import TwistStamped
+
+# initialise ros node
+rospy.init_node('cartesian_motion')
+
+# Create the publisher (queue size tells ROS to only publish the latest message)
+publisher = rospy.Publisher('/cartesian/velocity', TwistStamped, queue_size=1)
+
+# Create an initial start time
+start = timeit.default_timer()
+
+# Create a velocity message that will instruct the robot to move at 2cm a second in the z-axis of the base frame.
+velocity = TwistStamped()
+velocity.twist.linear.z = 0.02
+
+# Publish the velocity message to the panda driver at a frequency of 100Hz
+while (timeit.default_timer() - start) < 5:
+  publisher.publish(velocity)
+  rospy.sleep(0.01)
+  
+# Publish an empty TwistStamped to ensure that the arm stops moving
+publisher.publish(TwistStamped())
+```
+
 ### Subscribed Topics
 
 - **/arm/cartesian/velocity** ([geometry_msgs/TwistStamped](https://docs.ros.org/api/geometry_msgs/html/msg/Twist.html))
