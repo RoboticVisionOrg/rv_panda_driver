@@ -152,10 +152,33 @@ client.wait_for_result()
 - **/arm/cartesian/velocity** ([geometry_msgs/TwistStamped](https://docs.ros.org/api/geometry_msgs/html/msg/Twist.html))
 Moves the end-effector in cartesian space w.r.t. the target frame_id (base frame if no frame_id is set).
 
+### Publish Topics
+
+- **/arm/state**  ([rv_msgs/ManipulatorState](https://bitbucket.org/acrv/rv_msgs/src/master/msg/ManipulatorState.msg))
+Provides information on the current state of the manipulator including the pose of the end-effector w.r.t. to the base link, whether the manipulator is experiencing a cartesian contact and collision as a bit-wised error state flag.
+
 ### Services
 
 - **/arm/home** ([std_srvs/Empty](http://docs.ros.org/jade/api/std_srvs/html/srv/Empty.html))
 Moves the robot back to its initial ready pose.
+
+- **/arm/recover** ([std_srvs/Empty](http://docs.ros.org/jade/api/std_srvs/html/srv/Empty.html))
+Recovers from collision or limit violation error states that will put the robot into a non-operable state.
+
+- **/arm/stop** ([std_srvs/Empty](http://docs.ros.org/jade/api/std_srvs/html/srv/Empty.html))
+Stops the current motion of the current.
+
+- **/arm/get_named_poses** (rv_msgs/GetNamesList](https://bitbucket.org/acrv/rv_msgs/src/master/srv/GetNamesList.srv))
+Gets a list of currently stored named poses (includes both moveit and driver stored named poses).
+
+- **/arm/set_named_pose** ([rv_msgs/SetNamedPose](https://bitbucket.org/acrv/rv_msgs/src/master/srv/SetNamedPose.srv))
+Saves the current joint configuration of the panda with the provided pose name.
+
+- **/arm/set_cartesian_impedance** ([rv_msgs/SetCartesianImpedance](https://bitbucket.org/acrv/rv_msgs/src/master/srv/SetCartesianImpedance.srv)
+Adjusts the impedenace of the end-effector position in cartesian space.
+
+- **/arm/get_link_position** ([rv_msgs/GetRelativePose](https://bitbucket.org/acrv/rv_msgs/src/master/srv/GetRelativePose.srv))
+A convenience wrapper around the ROS transform lookup service that provides the relative pose of a target frame w.r.t. a reference frame.
 
 ### Action API
 
@@ -170,3 +193,7 @@ Moves the end-effector to the requested goal pose w.r.t. the base frame.
 - **/arm/cartesian/named_pose** ([rv_msgs/MoveToNamedPose.action](https://bitbucket.org/acrv/rv_msgs/src/master/action/MoveToNamedPose.action))
 Moves the end-effector to a pre-defined joint configuration.
 
+#### Gripper
+
+- **/arm/gripper** ([rv_msgs/ActuateGripper.action](https://bitbucket.org/acrv/rv_msgs/src/master/action/ActuateGripper.action))
+Actuates the gripper based on the requested mode. The static mode will move the gripper to the requested width. The grasp mode will attempt to grasp an object of width plus/minus a tolernace factor.
