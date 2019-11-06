@@ -71,7 +71,7 @@ end_pose = (np.array([0, 0, 0.400]), quaternion.quaternion(0.0, 0.70710678, -0.7
 n = 10
 
 # Create a ros action client to communicate with the controller
-client = actionlib.SimpleActionClient('/cartesian/pose', MoveToPoseAction)
+client = actionlib.SimpleActionClient('/arm/cartesian/pose', MoveToPoseAction)
 client.wait_for_server()
 
 for pose in plot_arc(center, start_pose, end_pose, n):

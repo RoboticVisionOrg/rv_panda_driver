@@ -1,6 +1,6 @@
 move_group: panda_arm_hand
 controllers:
-  - name: "/move_group/goal"
+  - name: '/move_group/goal'
     topic_type: "moveit_msgs/MoveGroupActionGoal"
     type: "publisher"
     controller: "position_joint_trajectory_controller"

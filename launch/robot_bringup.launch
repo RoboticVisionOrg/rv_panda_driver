@@ -1,6 +1,5 @@
 <?xml version="1.0" ?>
 <launch>
-
   <arg name="robot_ip" default="172.16.0.2" />
   <arg name="load_gripper" default="true" />
   <arg name="internal_controller" default="cartesian_impedance" />
@@ -25,7 +24,7 @@
     <arg name="stopped" value="true" />
   </include>
 
-  <node pkg="rv_panda_driver" type="panda_commander" name="panda_commander" output="screen">
+  <node pkg="rv_panda_driver" type="panda_commander" name="arm" output="screen">
     <rosparam command="load" file="$(find rv_panda_driver)/config/config.yaml" /> 
   </node>
 </launch>
