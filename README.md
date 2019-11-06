@@ -18,11 +18,15 @@ The Panda Driver can be launched by executing the following command:
 roslaunch rv_panda_driver robot_bringup.launch
 ```
 
-Other things to note when starting up the Panda
-- The lights indicate the status of the robot. (Blue = happy and ready to move, White = happy but estopped, Yellow = error)
-- You will need to release the joint locks through the Franka interface
-- When operating the arm have the E-stop handy for safety at all times
-- When the arm is E-stopped it can be moved freely using the wrist switch 
+Other things to note when starting up the Panda:
+
+* The lights indicate the status of the robot. 
+    * Blue = happy and ready to move 
+    * White = happy but estopped
+    * Yellow = error
+* You will need to release the joint locks through the Franka interface
+* When operating the arm have the E-stop handy for safety at all times
+* When the arm is E-stopped it can be moved freely using the wrist switch 
 
 To ensure the arm is working once started you can call the home routine. 
 ```bash
