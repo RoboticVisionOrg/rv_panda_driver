@@ -34,7 +34,7 @@ from geometry_msgs.msg import PoseStamped
 rospy.init_node('move_to_points_example')
 
 # Create a ros action client to communicate with the controller
-client = actionlib.SimpleActionClient('/cartesian/pose', MoveToPoseAction)
+client = actionlib.SimpleActionClient('/arm/cartesian/pose', MoveToPoseAction)
 client.wait_for_server()
 
 # Create a target pose
@@ -72,7 +72,7 @@ from geometry_msgs.msg import TwistStamped
 rospy.init_node('cartesian_motion')
 
 # Create the publisher (queue size tells ROS to only publish the latest message)
-publisher = rospy.Publisher('/cartesian/velocity', TwistStamped, queue_size=1)
+publisher = rospy.Publisher('/arm/cartesian/velocity', TwistStamped, queue_size=1)
 
 # Create an initial start time
 start = timeit.default_timer()
