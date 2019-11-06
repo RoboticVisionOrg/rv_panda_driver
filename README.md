@@ -22,7 +22,7 @@ The Panda Driver provides a number of options for moving the robot arm. These in
 
 #### Moving the End-Effector to an Arbitrary Pose
 
-The following example moves the end-effector of the Panda robot to an arbitrary position and orientation w.r.t. to the robots base frame.
+The following code example moves the end-effector of the Panda robot to an arbitrary position and orientation w.r.t. to the robots base frame.
 ```
 import rospy
 import actionlib
@@ -33,7 +33,7 @@ from geometry_msgs.msg import PoseStamped
 # initialise ros node
 rospy.init_node('move_to_points_example')
 
-# Create a ros action client to communicate with the controller
+# Create a ros action client to communicate with the driver
 client = actionlib.SimpleActionClient('/arm/cartesian/pose', MoveToPoseAction)
 client.wait_for_server()
 
@@ -61,7 +61,7 @@ client.wait_for_result()
 
 #### Moving the End-Effector in Cartesian Space
 
-The following example moves the arm at 2cm a second in the z-axis of the base-frame for 5 seconds. For safety reasons the driver has an expected minimum frequency of 100Hz.
+The following code example moves the arm at 2cm a second in the z-axis of the base-frame for 5 seconds. For safety reasons the driver has an expected minimum frequency of 100Hz.
 
 ```
 import rospy
@@ -89,6 +89,46 @@ while (timeit.default_timer() - start) < 5:
 # Publish an empty TwistStamped to ensure that the arm stops moving
 publisher.publish(TwistStamped())
 ```
+
+### Managing Named Poses
+While the MoveIt framework provide the ability to store joint configurations as named poses, these must be defined in the MoveIt configuration of the robot and cannot be adjusted during operation. 
+
+The panda driver solves this issue by providing the ability to save and remember joint configurations of the Panda arm for future, while also providing access to named poses provided by moveit.
+
+#### Saving Named Poses
+The following command demonstrates how to the current joint configuration of the robot with the name *test_pose*:
+
+```
+rosservice call /arm/set_named_pose "pose_name: 'test_pose' overwrite: false"
+```
+
+#### Getting Named Poses
+The following command demonstrates how to get the current set of stored named poses (created either through the driver or moveit)
+```
+rosservice call /arm/get_named_poses
+```
+
+#### Moving to a Named Pose
+The following code example demonstrates how to move to a named pose:
+```
+import rospy
+import actionlib
+
+from rv_msgs.msg import MoveToNamedPoseAction, MoveToNamedPoseGoal
+
+# initialise ros node
+rospy.init_node('named_pose_example')
+
+# Create a ros action client to communicate with the driver
+client = actionlib.SimpleActionClient('/arm/cartesian/named_pose', MoveToNamedPoseAction)
+client.wait_for_server()
+
+# Create and send a goal to move to the named pose test_pose
+client.send_goal(MoveToNamedPoseGoal(pose_name='test_pose'))
+client.wait_for_result()
+```
+
+**Note:** The goal pose can be a named pose created either by the driver or moveit. However, the named poses provided by the driver will take priority in the event of a naming conflict.
 
 ### Subscribed Topics
 
