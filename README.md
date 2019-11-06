@@ -4,7 +4,9 @@
 
 The Panda Driver provides a series of components for initalising and controlling the Franka-Emika Panda robotic arm.
 
-This package provides a simplified interface for controlling the arm in in a variety of articulation modes by extending the [QUT Manipulation Driver](https://bitbucket.org/acrv/rv_manipulation_driver) package.
+This package provides a simplified interface for controlling the arm in in a variety of articulation modes by extending the [RV Manipulation Driver](https://bitbucket.org/acrv/rv_manipulation_driver) package.
+
+![System Diagram] (docs/Panda.png)
 
 ## Usage
 
@@ -14,6 +16,17 @@ The Panda Driver can be launched by executing the following command:
 
 ```bash
 roslaunch rv_panda_driver robot_bringup.launch
+```
+
+Other things to note when starting up the Panda
+- The lights indicate the status of the robot. (Blue = happy and ready to move, White = happy but estopped, Yellow = error)
+- You will need to release the joint locks through the Franka interface
+- When operating the arm have the E-stop handy for safety at all times
+- When the arm is E-stopped it can be moved freely using the wrist switch 
+
+To ensure the arm is working once started you can call the home routine. 
+```bash
+rosservice call /arm/get_named_poses
 ```
 
 ### Moving the arm
@@ -144,34 +157,12 @@ Moves the robot back to its initial ready pose.
 
 #### Pose Control
 
-- **/arm/cartesian/pose/goal** ([rv_msgs/MoveToPoseGoal](https://bitbucket.org/acrv/rv_msgs/src/master/action/MoveToPose.action))
+- **/arm/cartesian/pose** ([rv_msgs/MoveToPose.action](https://bitbucket.org/acrv/rv_msgs/src/master/action/MoveToPose.action))
 Moves the end-effector to the requested goal pose w.r.t. the base frame.
 
-- **/arm/cartesian/pose/cancel** ([actionlib_msgs/GoalID](http://docs.ros.org/api/actionlib_msgs/html/msg/GoalID.html))
-Cancels the currently executing goal.
-
-- **/arm/cartesian/pose/feedback** ([rv_msgs/MoveToPoseGoal](https://bitbucket.org/acrv/rv_msgs/src/master/action/MoveToPose.action))
-Feedback from the currently executing goal.
-
-- **/arm/cartesian/pose/status** ([actionlib_msgs/GoalStatusArray](http://docs.ros.org/api/actionlib_msgs/html/msg/GoalStatusArray.html))
-Status information on goals sent to the driver.
-
-- **/arm/cartesian/pose/result** ([rv_msgs/MoveToPoseGoal](https://bitbucket.org/acrv/rv_msgs/src/master/action/MoveToPose.action))
-The result of the pose goal request.
 
 #### Named Pose Control
 
-- **/arm/cartesian/named_pose/goal** ([rv_msgs/MoveToNamedPoseGoal](https://bitbucket.org/acrv/rv_msgs/src/master/action/MoveToNamedPose.action))
+- **/arm/cartesian/named_pose** ([rv_msgs/MoveToNamedPose.action](https://bitbucket.org/acrv/rv_msgs/src/master/action/MoveToNamedPose.action))
 Moves the end-effector to a pre-defined joint configuration.
 
-- **/arm/cartesian/named_pose/cancel** ([actionlib_msgs/GoalID](http://docs.ros.org/api/actionlib_msgs/html/msg/GoalID.html))
-Cancels the currently executing goal.
-
-- **/arm/cartesian/named_pose/feedback** ([rv_msgs/MoveToNamedPoseFeedback]((https://bitbucket.org/acrv/rv_msgs/src/master/action/MoveToNamedPose.action)))
-Feedback from the currently executing goal.
-
-- **/arm/cartesian/named_pose/status** ([actionlib_msgs/GoalStatusArray](http://docs.ros.org/api/actionlib_msgs/html/msg/GoalStatusArray.html))
-Status information on goals sent to the driver.
-
-- **/arm/cartesian/named_pose/result** ([rv_msgs/MoveToNamedPoseResult]((https://bitbucket.org/acrv/rv_msgs/src/master/action/MoveToNamedPose.action)))
-The result of the goal request.
