@@ -30,7 +30,7 @@ Other things to note when starting up the Panda:
 
 To ensure the arm is working once started you can call the home routine. 
 ```bash
-rosservice call /arm/get_named_poses
+rosservice call /arm/home
 ```
 
 ### Moving the arm
