@@ -40,6 +40,7 @@ The Panda Driver provides a number of options for moving the robot arm. These in
 #### Moving the End-Effector to an Arbitrary Pose
 
 The following code example moves the end-effector of the Panda robot to an arbitrary position and orientation w.r.t. to the robots base frame.
+
 ```
 import rospy
 import actionlib
@@ -127,6 +128,7 @@ rosservice call /arm/get_named_poses
 
 #### Moving to a Named Pose
 The following code example demonstrates how to move to a named pose:
+
 ```
 import rospy
 import actionlib
