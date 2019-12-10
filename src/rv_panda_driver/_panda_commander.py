@@ -108,7 +108,10 @@ class PandaCommander(ManipulationDriver):
     
     self.last_estop_state = 1 if msg.robot_mode == FrankaState.ROBOT_MODE_USER_STOPPED else 0
 
-
+  def home_cb(self, req)
+    self.self.__move_to_named('ready')
+    return []
+    
   def recover_cb(self, req):
     self.moveit_commander.recover()
     return []
