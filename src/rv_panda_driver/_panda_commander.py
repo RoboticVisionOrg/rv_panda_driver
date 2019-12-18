@@ -39,18 +39,13 @@ class PandaCommander(ManipulationDriver):
     if self.switcher.get_current_name() != 'cartesian_velocity_node_controller':
         self.switcher.switch_controller('cartesian_velocity_node_controller')
     
-    result = self.transform_velocity(msg, 'panda_link0')
+    result = self.transform_velocity(msg, self.base_frame)
 
     self.velocity_publisher.publish(result)
 
-  def pose_cb(self, goal):
-    if goal.goal_pose.header.frame_id == '':
-      goal.goal_pose.header.frame_id = 'panda_link0'
-    ManipulationDriver.pose_cb(self, goal)
-
   def state_cb(self, msg):
     state = ManipulatorState()
-    state.ee_pose = self.get_link_pose('panda_link0', 'panda_EE') 
+    state.ee_pose = self.get_link_pose(self.base_frame, self.ee_frame) 
     
     state.cartesian_contact = msg.cartesian_contact
     state.cartesian_collision = msg.cartesian_collision
@@ -107,10 +102,6 @@ class PandaCommander(ManipulationDriver):
         self.moveit_commander.recover()
     
     self.last_estop_state = 1 if msg.robot_mode == FrankaState.ROBOT_MODE_USER_STOPPED else 0
-
-  def home_cb(self, req)
-    self.self.__move_to_named('ready')
-    return []
     
   def recover_cb(self, req):
     self.moveit_commander.recover()
