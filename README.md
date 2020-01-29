@@ -6,8 +6,6 @@ The Panda Driver provides a series of components for initalising and controlling
 
 This package provides a simplified interface for controlling the arm in in a variety of articulation modes by extending the [RV Manipulation Driver](https://bitbucket.org/acrv/rv_manipulation_driver) package.
 
-![System Diagram] (docs/Panda.png)
-
 ## Usage
 
 ### Launching the driver
