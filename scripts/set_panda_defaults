@@ -25,7 +25,7 @@ rospy.wait_for_service('/franka_control/set_EE_frame')
 eef_srv = rospy.ServiceProxy('/franka_control/set_EE_frame', SetEEFrame)
 eef_msg = SetEEFrameRequest()
 # This is the default settings + 35mm down for the gripper
-eef_msg.F_T_EE = [0.707099974155426, -0.707099974155426, 0.0, 0.0, 0.707099974155426, 0.707099974155426, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.035 + 0.10339999943971634, 1.0]
+eef_msg.F_T_EE = [0.707099974155426, -0.707099974155426, 0.0, 0.0, 0.707099974155426, 0.707099974155426, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.10339999943971634, 1.0]
 
 res = eef_srv.call(eef_msg).success
 if not res:
