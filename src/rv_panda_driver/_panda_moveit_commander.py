@@ -3,7 +3,7 @@ import actionlib
 import franka_gripper.msg
 
 from rv_manipulation_driver import ManipulationMoveItDriver
-from franka_control.msg import ErrorRecoveryAction, ErrorRecoveryGoal
+from franka_msgs.msg import ErrorRecoveryAction, ErrorRecoveryGoal
 
 class PandaMoveItCommander(ManipulationMoveItDriver):
   def __init__(self, group_name=None):
