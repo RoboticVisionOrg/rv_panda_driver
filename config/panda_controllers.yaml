@@ -14,3 +14,40 @@ cartesian_velocity_node_controller:
             acceleration: 5.0
             jerk: 2000.0
     stop_on_contact: true
+joint_velocity_node_controller:
+    type: rv_panda_driver/JointVelocityNodeController
+    arm_id: panda
+    joint_names:
+      - panda_joint1
+      - panda_joint2
+      - panda_joint3
+      - panda_joint4
+      - panda_joint5
+      - panda_joint6
+      - panda_joint7
+    rate_limiting:
+        velocity:
+          - 2.1750
+          - 2.1750
+          - 2.1750
+          - 2.1750
+          - 2.6100
+          - 2.6100
+          - 2.6100
+        acceleration:
+          - 15
+          - 7.5
+          - 10
+          - 12.5
+          - 15
+          - 20
+          - 20
+        jerk:
+          - 7500
+          - 3750
+          - 5000
+          - 6250
+          - 7500
+          - 10000
+          - 10000
+

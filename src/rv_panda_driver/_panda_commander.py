@@ -49,6 +49,9 @@ class PandaCommander(ManipulationDriver):
 
     self.velocity_publisher.publish(result)
 
+  def joint_velocity_cb(self, msg):
+    print(msg)
+    
   def state_cb(self, msg):
     state = ManipulatorState()
     state.ee_pose = self.get_link_pose(self.base_frame, self.ee_frame) 

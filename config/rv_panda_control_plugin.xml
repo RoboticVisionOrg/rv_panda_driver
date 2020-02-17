@@ -4,5 +4,9 @@
       A Cartesian velocity controller that takes commands from a ROS subscriber.
     </description>
   </class>
-
+  <class name="rv_panda_driver/JointVelocityNodeController" type="rv_panda_driver::JointVelocityNodeController" base_class_type="controller_interface::ControllerBase">
+    <description>
+      A Joint velocity controller that takes commands from a ROS subscriber.
+    </description>
+  </class>
 </library>
