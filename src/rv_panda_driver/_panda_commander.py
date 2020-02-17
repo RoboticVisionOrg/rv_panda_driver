@@ -12,8 +12,8 @@ from rv_msgs.msg import ManipulatorState
 from rv_msgs.msg import ActuateGripperAction, ActuateGripperActionResult
 from rv_msgs.srv import SetCartesianImpedanceResponse
 
-from franka_control.srv import SetCartesianImpedance as FrankaSetCartesianImpedance
-from franka_control.srv import SetEEFrame, SetEEFrameRequest
+from franka_msgs.srv import SetCartesianImpedance as FrankaSetCartesianImpedance
+from franka_msgs.srv import SetEEFrame, SetEEFrameRequest
 from franka_msgs.msg import FrankaState
 from _panda_moveit_commander import PandaMoveItCommander
 

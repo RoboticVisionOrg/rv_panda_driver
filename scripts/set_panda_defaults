@@ -1,8 +1,8 @@
 #! /usr/bin/env python
 
 import rospy
-from franka_control.srv import SetForceTorqueCollisionBehavior, SetForceTorqueCollisionBehaviorRequest
-from franka_control.srv import SetEEFrame, SetEEFrameRequest
+from franka_msgs.srv import SetForceTorqueCollisionBehavior, SetForceTorqueCollisionBehaviorRequest
+from franka_msgs.srv import SetEEFrame, SetEEFrameRequest
 
 rospy.init_node('set_panda_defaults')
 
