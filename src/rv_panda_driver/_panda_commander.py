@@ -8,6 +8,7 @@ from rv_manipulation_driver import transforms
 from std_msgs.msg import Int8
 from geometry_msgs.msg import Twist
 
+from rv_msgs.msg import JointVelocity
 from rv_msgs.msg import ManipulatorState
 from rv_msgs.msg import ActuateGripperAction, ActuateGripperActionResult
 from rv_msgs.srv import SetCartesianImpedanceResponse
@@ -35,6 +36,7 @@ class PandaCommander(ManipulationDriver):
     ManipulationDriver.__init__(self, PandaMoveItCommander(self.move_group))
 
     self.velocity_publisher = rospy.Publisher('/cartesian_velocity_node_controller/cartesian_velocity', Twist, queue_size=1)
+    self.joint_velocity_publisher = rospy.Publisher('/joint_velocity_node_controller/joint_velocity', JointVelocity, queue_size=1)
     self.recover_on_estop = rospy.get_param('/manipulation_commander/recover_on_estop', True)
 
     # handling e-stop
@@ -50,8 +52,11 @@ class PandaCommander(ManipulationDriver):
     self.velocity_publisher.publish(result)
 
   def joint_velocity_cb(self, msg):
-    print(msg)
+    if self.switcher.get_current_name() != 'joint_velocity_node_controller':
+        self.switcher.switch_controller('joint_velocity_node_controller')
     
+    self.joint_velocity_publisher.publish(msg)
+
   def state_cb(self, msg):
     state = ManipulatorState()
     state.ee_pose = self.get_link_pose(self.base_frame, self.ee_frame) 

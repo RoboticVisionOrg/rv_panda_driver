@@ -120,7 +120,7 @@ void JointVelocityNodeController::joint_velocity_callback(const rv_msgs::JointVe
   velocity_command[3] = msg->joints[3];
   velocity_command[4] = msg->joints[4];
   velocity_command[5] = msg->joints[5];
-  velocity_command[7] = msg->joints[7];
+  velocity_command[6] = msg->joints[6];
 
   time_since_last_command = ros::Duration(0.0);
 }
@@ -150,11 +150,11 @@ void JointVelocityNodeController::update(const ros::Time& /* time */,
     max_jerk,
     velocity_command,
     state.dq_d,
-    state.dq,
     state.ddq_d
   );
 
-  for (size_t idx = 0; velocity_joint_handles_.size(); ++idx) {
+  for (size_t idx = 0; idx < velocity_joint_handles_.size(); idx++) {
+    std::cout << idx << std::endl;
     velocity_joint_handles_[idx].setCommand(last_sent_velocity[idx]);
   }
 }
