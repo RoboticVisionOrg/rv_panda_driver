@@ -154,7 +154,6 @@ void JointVelocityNodeController::update(const ros::Time& /* time */,
   );
 
   for (size_t idx = 0; idx < velocity_joint_handles_.size(); idx++) {
-    std::cout << idx << std::endl;
     velocity_joint_handles_[idx].setCommand(last_sent_velocity[idx]);
   }
 }
