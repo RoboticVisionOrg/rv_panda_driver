@@ -107,14 +107,15 @@ class PandaCommander(ManipulationDriver):
           state.errors |= ManipulatorState.OTHER
 
     self.state_publisher.publish(state)
-
+    self.state = state
+    
     if msg.robot_mode == FrankaState.ROBOT_MODE_IDLE:
       if self.recover_on_estop and self.last_estop_state == 1:
         self.moveit_commander.recover()
     else:
       if state.errors & ManipulatorState.OTHER == ManipulatorState.OTHER:
         self.moveit_commander.recover()
-    
+
     self.last_estop_state = 1 if msg.robot_mode == FrankaState.ROBOT_MODE_USER_STOPPED else 0
     
   def recover_cb(self, req):
