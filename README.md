@@ -243,27 +243,17 @@ Instructs the driver to remove named poses stored in the indicated config file.
 
 ### Action API
 
-#### Cartesian Pose Control
-
 - **/arm/cartesian/pose** ([rv_msgs/MoveToPose.action](https://github.com/roboticvisionorg/rv_msgs/blob/master/action/MoveToPose.action))
 Moves the end-effector to the requested goal pose w.r.t. the indicated frame id.
-
-#### Cartesian Servoing Control
 
 - **/arm/cartesian/servo_pose** ([rv_msgs/ServoToPose.action](https://github.com/roboticvisionorg/rv_msgs/blob/master/action/ServoToPose.action))
 Servos the end-effector to the requested goal pose.
 
-#### Named Pose Control
-
 - **/arm/cartesian/named_pose** ([rv_msgs/MoveToNamedPose.action](https://github.com/roboticvisionorg/rv_msgs/blob/master/action/MoveToNamedPose.action))
 Moves the end-effector to a pre-defined joint configuration.
 
-#### Joint Pose Control
-
 - **/arm/cartesian/servo_pose** ([rv_msgs/MoveToJointPoseAction](https://github.com/roboticvisionorg/rv_msgs/blob/master/action/MoveToJointPose.action))
 Moves the joints of the robot to the indicated positions (radians).
-
-#### Gripper
 
 - **/arm/gripper** ([rv_msgs/ActuateGripper.action](https://github.com/roboticvisionorg/rv_msgs/blob/master/action/ActuateGripper.action))
 Actuates the gripper based on the requested mode. The static mode will move the gripper to the requested width. The grasp mode will attempt to grasp an object of width plus/minus a tolernace factor.
