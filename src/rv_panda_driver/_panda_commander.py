@@ -59,8 +59,10 @@ class PandaCommander(ManipulationDriver):
 
   def state_cb(self, msg):
     state = ManipulatorState()
+
     state.ee_pose = self.get_link_pose(self.base_frame, self.ee_frame) 
-    
+    state.joint_poses = msg.q
+
     state.cartesian_contact = msg.cartesian_contact
     state.cartesian_collision = msg.cartesian_collision
     
