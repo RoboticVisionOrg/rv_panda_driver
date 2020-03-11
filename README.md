@@ -75,6 +75,45 @@ client.send_goal(goal)
 client.wait_for_result()
 ```
 
+#### Servoing the End-Effector to an Arbitrary Pose
+The following code example servos the end-effector of the Panda robot to an arbitrary position and orientation w.r.t. to the robots base frame.
+
+```
+import rospy
+import actionlib
+
+from rv_msgs.msg import ServoToPoseAction, ServoToPoseGoal
+from geometry_msgs.msg import PoseStamped
+
+# initialise ros node
+rospy.init_node('servo_to_points_example')
+
+# Create a ros action client to communicate with the driver
+client = actionlib.SimpleActionClient('/arm/cartesian/servo_pose', ServoToPoseAction)
+client.wait_for_server()
+
+# Create a target pose
+target = PoseStamped()
+target.header.frame_id = 'panda_link0'
+
+# Populate with target position/orientation (READY POSE)
+target.pose.position.x = 0.307
+target.pose.position.y = 0.000
+target.pose.position.z = 0.590
+
+target.pose.orientation.x = -1.00
+target.pose.orientation.y =  0.00
+target.pose.orientation.z =  0.00
+target.pose.orientation.w =  0.00
+
+# Create goal from target pose
+goal = ServoToPoseGoal(stamped_pose=target, scaling=0.5)
+
+# Send goal and wait for it to finish
+client.send_goal(goal)
+client.wait_for_result()
+```
+
 #### Moving the End-Effector in Cartesian Space
 
 The following code example moves the arm at 2cm a second in the z-axis of the base-frame for 5 seconds. For safety reasons the driver has an expected minimum frequency of 100Hz.
@@ -152,7 +191,10 @@ client.wait_for_result()
 - **/arm/cartesian/velocity** ([geometry_msgs/TwistStamped](https://docs.ros.org/api/geometry_msgs/html/msg/Twist.html))
 Moves the end-effector in cartesian space w.r.t. the target frame_id (base frame if no frame_id is set).
 
-### Publish Topics
+- **/arm/joint/velocity** ([rv_msgs/JointVelocity](https://github.com/roboticvisionorg/rv_msgs/blob/master/msg/JointVelocity.html))
+Moves the joints of the manipulator at the requested velocity.
+
+### Published Topics
 
 - **/arm/state**  ([rv_msgs/ManipulatorState](https://github.com/roboticvisionorg/rv_msgs/blob/master/msg/ManipulatorState.msg))
 Provides information on the current state of the manipulator including the pose of the end-effector w.r.t. to the base link, whether the manipulator is experiencing a cartesian contact and collision as a bit-wised error state flag.
@@ -168,7 +210,10 @@ Recovers from collision or limit violation error states that will put the robot 
 - **/arm/stop** ([std_srvs/Empty](http://docs.ros.org/jade/api/std_srvs/html/srv/Empty.html))
 Stops the current motion of the current.
 
-- **/arm/get_named_poses** (rv_msgs/GetNamesList](https://github.com/roboticvisionorg/rv_msgs/blob/master/srv/GetNamesList.srv))
+- **/arm/set_ee_offset** ([rv_msgs/SetPose](https://github.com/roboticvisionorg/rv_msgs/blob/master/srv/SetPose.srv))
+Sets the offset between the end-effector and the wrist of the robot arm.
+
+- **/arm/get_named_poses** ([rv_msgs/GetNamesList](https://github.com/roboticvisionorg/rv_msgs/blob/master/srv/GetNamesList.srv))
 Gets a list of currently stored named poses (includes both moveit and driver stored named poses).
 
 - **/arm/set_named_pose** ([rv_msgs/SetNamedPose](https://github.com/roboticvisionorg/rv_msgs/blob/master/srv/SetNamedPose.srv))
@@ -180,18 +225,43 @@ Adjusts the impedenace of the end-effector position in cartesian space.
 - **/arm/get_link_position** ([rv_msgs/GetRelativePose](https://github.com/roboticvisionorg/rv_msgs/blob/master/srv/GetRelativePose.srv))
 A convenience wrapper around the ROS transform lookup service that provides the relative pose of a target frame w.r.t. a reference frame.
 
+- **/arm/set_cartesian_planning_enabled** ([std_srvs/SetBool](http://docs.ros.org/jade/api/std_srvs/html/srv/SetBool.html))
+Forces the path-planner to only consider linear paths when moving moving between poses with /arm/cartesian/pose
+
+- **/arm/get_cartesian_planning_enabled** ([rv_msgs/SimpleRequest](https://github.com/roboticvisionorg/rv_msgs/blob/master/srv/SimpleRequest.srv))
+Checks whether the path-planner will only consider linear paths when moving moving between poses with /arm/cartesian/pose
+
+- **/arm/add_named_pose_config** ([rv_msgs/SetNamedPoseConfig](https://github.com/roboticvisionorg/rv_msgs/blob/master/srv/SetNamedPoseConfig.srv))
+Instructs the driver to load named poses stored in the indicated config file.
+
+- **/arm/get_named_pose_configs** ([rv_msgs/GetNamedPoseConfigs](https://github.com/roboticvisionorg/rv_msgs/blob/master/srv/GetNamedPoseConfigs.srv))
+Gets the list of config files to check for named poses.
+
+- **/arm/remove_named_pose_config** ([rv_msgs/SetNamedPoseConfig](https://github.com/roboticvisionorg/rv_msgs/blob/master/srv/SetNamedPoseConfig.srv))
+Instructs the driver to remove named poses stored in the indicated config file.
+
+
 ### Action API
 
-#### Pose Control
+#### Cartesian Pose Control
 
 - **/arm/cartesian/pose** ([rv_msgs/MoveToPose.action](https://github.com/roboticvisionorg/rv_msgs/blob/master/action/MoveToPose.action))
-Moves the end-effector to the requested goal pose w.r.t. the base frame.
+Moves the end-effector to the requested goal pose w.r.t. the indicated frame id.
 
+#### Cartesian Servoing Control
+
+- **/arm/cartesian/servo_pose** ([rv_msgs/ServoToPose.action](https://github.com/roboticvisionorg/rv_msgs/blob/master/action/ServoToPose.action))
+Servos the end-effector to the requested goal pose.
 
 #### Named Pose Control
 
 - **/arm/cartesian/named_pose** ([rv_msgs/MoveToNamedPose.action](https://github.com/roboticvisionorg/rv_msgs/blob/master/action/MoveToNamedPose.action))
 Moves the end-effector to a pre-defined joint configuration.
+
+#### Joint Pose Control
+
+- **/arm/cartesian/servo_pose** ([rv_msgs/MoveToJointPoseAction](https://github.com/roboticvisionorg/rv_msgs/blob/master/action/MoveToJointPose.action))
+Moves the joints of the robot to the indicated positions (radians).
 
 #### Gripper
 
