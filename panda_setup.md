@@ -1,4 +1,4 @@
-# Setup
+# Panda Setup
 
 These setup instructions assume that you have already added the [Robotic Vision repositories](https://roboticvisionorg.github.io/docs/)
 
