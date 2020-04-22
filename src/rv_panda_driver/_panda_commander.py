@@ -46,7 +46,7 @@ class PandaCommander(ManipulationDriver):
   def velocity_cb(self, msg):
     if self.switcher.get_current_name() != 'cartesian_velocity_node_controller':
         self.switcher.switch_controller('cartesian_velocity_node_controller')
-    
+
     result = self.transform_velocity(msg, self.base_frame)
 
     self.velocity_publisher.publish(result)
@@ -54,31 +54,33 @@ class PandaCommander(ManipulationDriver):
   def joint_velocity_cb(self, msg):
     if self.switcher.get_current_name() != 'joint_velocity_node_controller':
         self.switcher.switch_controller('joint_velocity_node_controller')
-    
+
     self.joint_velocity_publisher.publish(msg)
 
   def state_cb(self, msg):
     state = ManipulatorState()
 
-    state.ee_pose = self.get_link_pose(self.base_frame, self.ee_frame) 
+    state.ee_pose = self.get_link_pose(self.base_frame, self.ee_frame)
+
     state.joint_poses = msg.q
+    state.joint_torques = msg.tau_J
 
     state.cartesian_contact = msg.cartesian_contact
     state.cartesian_collision = msg.cartesian_collision
-    
+
     state.errors |= ManipulatorState.ESTOP if msg.robot_mode == FrankaState.ROBOT_MODE_USER_STOPPED else 0
     state.errors |= ManipulatorState.COLLISION if any(state.cartesian_collision) else 0
 
     for n in msg.last_motion_errors.__slots__:
       if msg.robot_mode != 2 and getattr(msg.last_motion_errors, n):
-        if n in ['joint_position_limits_violation', 
-                 'joint_velocity_violation', 
+        if n in ['joint_position_limits_violation',
+                 'joint_velocity_violation',
                  'joint_position_motion_generator_start_pose_invalid',
                  'joint_motion_generator_position_limits_violation',
                  'joint_motion_generator_velocity_limits_violation',
                  'joint_motion_generator_velocity_discontinuity',
                  'joint_motion_generator_acceleration_discontinuity']:
-          state.errors |= ManipulatorState.JOINT_LIMIT_VIOLATION   
+          state.errors |= ManipulatorState.JOINT_LIMIT_VIOLATION
 
         elif n in ['cartesian_position_limits_violation',
                    'cartesian_velocity_violation',
@@ -110,7 +112,7 @@ class PandaCommander(ManipulationDriver):
 
     self.state_publisher.publish(state)
     self.state = state
-    
+
     if msg.robot_mode == FrankaState.ROBOT_MODE_IDLE:
       if self.recover_on_estop and self.last_estop_state == 1:
         self.moveit_commander.recover()
@@ -119,22 +121,24 @@ class PandaCommander(ManipulationDriver):
         self.moveit_commander.recover()
 
     self.last_estop_state = 1 if msg.robot_mode == FrankaState.ROBOT_MODE_USER_STOPPED else 0
-    
+
   def recover_cb(self, req):
     self.moveit_commander.recover()
     return []
 
   def set_cartesian_impedance_cb(self, req):
+    self.moveit_commander.stop()
+    time.sleep(0.1)
+
     current = self.switcher.get_current_name()
     self.switcher.switch_controller(None)
-    
-    time.sleep(0.1)
+
     result = self.cartesian_impedance_proxy(req.cartesian_impedance)
-    
+
     self.switcher.switch_controller(current)
 
     return SetCartesianImpedanceResponse(success=result.success, error=result.error)
-    
+
   def set_ee_offset(self, offset):
     trans = transforms.pose_msg_to_trans(offset)
     return self.set_ee(SetEEFrameRequest(
