@@ -25,6 +25,7 @@
   <depend>realtime_tools</depend>
   <depend>roscpp</depend>
   <exec_depend>rospy</exec_depend>
+  <exec_depend>python-ropy</exec_depend>
   <exec_depend>rv_panda_moveit_config</exec_depend>
 
   <export>

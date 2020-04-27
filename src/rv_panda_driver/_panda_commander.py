@@ -2,6 +2,9 @@ import rospy
 import sys
 import time
 
+import ropy as rp
+import numpy as np
+
 from rv_manipulation_driver import ManipulationDriver
 from rv_manipulation_driver import transforms
 
@@ -22,6 +25,7 @@ class PandaCommander(ManipulationDriver):
   def __init__(self):
 
     self.move_group = rospy.get_param('~move_group', None)
+    self.configuration = rp.Panda()
 
     if not self.move_group:
       rospy.logerr('Unable to load move_group name from rosparam server path: move_group')
@@ -138,6 +142,19 @@ class PandaCommander(ManipulationDriver):
     self.switcher.switch_controller(current)
 
     return SetCartesianImpedanceResponse(success=result.success, error=result.error)
+
+  def get_cartesian_manipulability_cb(self, req):
+    try:
+      panda = rp.Panda()
+      panda.q = np.array(self.moveit_commander.get_pose_ik(req.stamped_pose))
+      return panda.m
+    except:
+      return 0
+      
+  def get_joint_manipulability_cb(self, req):
+    panda = rp.Panda()
+    panda.q = np.array(req.joints)
+    return panda.m
 
   def set_ee_offset(self, offset):
     trans = transforms.pose_msg_to_trans(offset)
