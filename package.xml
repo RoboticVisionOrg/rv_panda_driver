@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <package format="2">
   <name>rv_panda_driver</name>
-  <version>0.3.7</version>
+  <version>0.3.8</version>
   <description>The rv_panda_driver package</description>
   
   <maintainer email="g.suddrey@qut.edu.au">Gavin Suddrey</maintainer>
@@ -25,8 +25,9 @@
   <depend>realtime_tools</depend>
   <depend>roscpp</depend>
   <exec_depend>rospy</exec_depend>
-  <exec_depend>python-ropy</exec_depend>
   <exec_depend>rv_panda_moveit_config</exec_depend>
+  <exec_depend>python-ropy</exec_depend>
+  <exec_depend>python-qpsolvers</exec_depend>
 
   <export>
     <controller_interface plugin="${prefix}/config/rv_panda_control_plugin.xml"/>

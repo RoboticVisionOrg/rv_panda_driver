@@ -5,6 +5,8 @@ import time
 import ropy as rp
 import numpy as np
 
+import qpsolvers as qp
+
 from rv_manipulation_driver import ManipulationDriver
 from rv_manipulation_driver import transforms
 
@@ -61,6 +63,31 @@ class PandaCommander(ManipulationDriver):
 
     self.joint_velocity_publisher.publish(msg)
 
+  def pose_cb(self, goal):
+    transformed = self.tf_listener.transformPose(self.base_frame, goal.stamped_pose)
+    wTep = transforms.pose_msg_to_trans(transformed.pose)
+
+    Y = 0.005
+    Q = Y * np.eye(7)
+
+    arrived = False
+    rate = rospy.Rate(200)
+
+    while not arrived:
+      msg = JointVelocity()
+
+      v, arrived = rp.p_servo(self.configuration.T, wTep)
+
+      Aeq = self.configuration.Je
+      beq = v.reshape((6,))
+
+      c = -self.configuration.Jm.reshape((7,))
+
+      dq = qp.solve_qp(Q, c, None, None, Aeq, beq)
+
+      self.joint_velocity_cb(JointVelocity(joints=dq))
+      rate.sleep()
+
   def state_cb(self, msg):
     state = ManipulatorState()
 
@@ -113,6 +140,8 @@ class PandaCommander(ManipulationDriver):
 
         else:
           state.errors |= ManipulatorState.OTHER
+
+    self.configuration.q = msg.q
 
     self.state_publisher.publish(state)
     self.state = state
