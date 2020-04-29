@@ -16,6 +16,7 @@ from geometry_msgs.msg import Twist
 from rv_msgs.msg import JointVelocity
 from rv_msgs.msg import ManipulatorState
 from rv_msgs.msg import ActuateGripperAction, ActuateGripperActionResult
+from rv_msgs.msg import MoveToPoseResult
 from rv_msgs.srv import SetCartesianImpedanceResponse
 
 from franka_msgs.srv import SetCartesianImpedance as FrankaSetCartesianImpedance
@@ -63,8 +64,11 @@ class PandaCommander(ManipulationDriver):
 
     self.joint_velocity_publisher.publish(msg)
 
-  def pose_cb(self, goal):
-    transformed = self.tf_listener.transformPose(self.base_frame, goal.stamped_pose)
+  def servo_cb(self, goal):
+    if goal.goal_pose.header.frame_id == '':
+      goal.goal_pose.header.frame_id = self.base_frame
+
+    transformed = self.tf_listener.transformPose(self.base_frame, goal.goal_pose)
     wTep = transforms.pose_msg_to_trans(transformed.pose)
 
     Y = 0.005
@@ -72,21 +76,23 @@ class PandaCommander(ManipulationDriver):
 
     arrived = False
     rate = rospy.Rate(200)
-
-    while not arrived:
+    
+    while not arrived and self.state.errors == 0:
       msg = JointVelocity()
 
-      v, arrived = rp.p_servo(self.configuration.T, wTep)
-
+      v, arrived = rp.p_servo(self.configuration.T, wTep, goal.speed if goal.speed != 0 else 1)
+    
       Aeq = self.configuration.Je
       beq = v.reshape((6,))
 
       c = -self.configuration.Jm.reshape((7,))
 
       dq = qp.solve_qp(Q, c, None, None, Aeq, beq)
-
-      self.joint_velocity_cb(JointVelocity(joints=dq))
+    
+      self.joint_velocity_cb(JointVelocity(joints=dq.tolist()))
       rate.sleep()
+
+    self.pose_server.set_succeeded(MoveToPoseResult(result=0 if self.state.errors == 0 else 1))
 
   def state_cb(self, msg):
     state = ManipulatorState()
@@ -141,7 +147,7 @@ class PandaCommander(ManipulationDriver):
         else:
           state.errors |= ManipulatorState.OTHER
 
-    self.configuration.q = msg.q
+    self.configuration.q = np.array(msg.q)
 
     self.state_publisher.publish(state)
     self.state = state

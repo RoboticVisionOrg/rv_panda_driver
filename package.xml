@@ -28,6 +28,7 @@
   <exec_depend>rv_panda_moveit_config</exec_depend>
   <exec_depend>python-ropy</exec_depend>
   <exec_depend>python-qpsolvers</exec_depend>
+  <exec_depend>python-quadprog</exec_depend>
 
   <export>
     <controller_interface plugin="${prefix}/config/rv_panda_control_plugin.xml"/>
