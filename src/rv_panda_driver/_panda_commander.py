@@ -65,10 +65,10 @@ class PandaCommander(ManipulationDriver):
     self.joint_velocity_publisher.publish(msg)
 
   def servo_cb(self, goal):
-    if goal.goal_pose.header.frame_id == '':
-      goal.goal_pose.header.frame_id = self.base_frame
+    if goal.stamped_pose.header.frame_id == '':
+      goal.stamped_pose.header.frame_id = self.base_frame
 
-    transformed = self.tf_listener.transformPose(self.base_frame, goal.goal_pose)
+    transformed = self.tf_listener.transformPose(self.base_frame, goal.stamped_pose)
     wTep = transforms.pose_msg_to_trans(transformed.pose)
 
     Y = 0.005
@@ -80,7 +80,7 @@ class PandaCommander(ManipulationDriver):
     while not arrived and self.state.errors == 0:
       msg = JointVelocity()
 
-      v, arrived = rp.p_servo(self.configuration.T, wTep, goal.speed if goal.speed != 0 else 1)
+      v, arrived = rp.p_servo(self.configuration.T, wTep, goal.scaling if goal.scaling else 0.6)
     
       Aeq = self.configuration.Je
       beq = v.reshape((6,))
