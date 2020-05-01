@@ -16,7 +16,7 @@ from geometry_msgs.msg import Twist
 from rv_msgs.msg import JointVelocity
 from rv_msgs.msg import ManipulatorState
 from rv_msgs.msg import ActuateGripperAction, ActuateGripperActionResult
-from rv_msgs.msg import MoveToPoseResult
+from rv_msgs.msg import ServoToPoseResult
 from rv_msgs.srv import SetCartesianImpedanceResponse
 
 from franka_msgs.srv import SetCartesianImpedance as FrankaSetCartesianImpedance
@@ -92,7 +92,7 @@ class PandaCommander(ManipulationDriver):
       self.joint_velocity_cb(JointVelocity(joints=dq.tolist()))
       rate.sleep()
 
-    self.pose_server.set_succeeded(MoveToPoseResult(result=0 if self.state.errors == 0 else 1))
+    return self.pose_servo_server.set_succeeded(ServoToPoseResult(result=0 if self.state.errors == 0 else 1))
 
   def state_cb(self, msg):
     state = ManipulatorState()
