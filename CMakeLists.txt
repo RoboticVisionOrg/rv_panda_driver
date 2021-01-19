@@ -15,10 +15,10 @@ find_package(catkin REQUIRED COMPONENTS
   franka_gripper
   franka_hw
   franka_msgs
-  rv_panda_moveit_config
   geometry_msgs
   rospy
   roscpp
+  rv_msgs
 )
 
 ## System dependencies are found with CMake's conventions
