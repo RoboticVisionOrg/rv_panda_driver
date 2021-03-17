@@ -105,6 +105,7 @@ class PandaCommander(ManipulationDriver):
     state.cartesian_contact = msg.cartesian_contact
     state.cartesian_collision = msg.cartesian_collision
 
+    state.errors |= ManipulatorState.LOCKED if msg.robot_mode == FrankaState.ROBOT_MODE_OTHER else 0
     state.errors |= ManipulatorState.ESTOP if msg.robot_mode == FrankaState.ROBOT_MODE_USER_STOPPED else 0
     state.errors |= ManipulatorState.COLLISION if any(state.cartesian_collision) else 0
 
