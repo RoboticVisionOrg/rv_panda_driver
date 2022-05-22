@@ -1,9 +1,0 @@
-move_group: panda_arm_hand
-base_frame: panda_link0
-ee_frame: panda_EE
-home_pose: ready
-controllers:
-  - name: '/move_group/goal'
-    topic_type: "moveit_msgs/MoveGroupActionGoal"
-    type: "publisher"
-    controller: "position_joint_trajectory_controller"
